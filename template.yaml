@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Deployment instance with CORP network access'
+
+Parameters:
+  CurrentIP:
+    Type: String
+    Default: ""
+    Description: Current IP address for access (optional if on Amazon VPN)
+  
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: EC2 Key Pair for SSH access
+
+Resources:
+  DeploymentSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for deployment instance
+      VpcId: !Ref AWS::NoValue
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourcePrefixListId: pl-02cd2c6b # AAPL CORP network prefix list
+      Tags:
+        - Key: Name
+          Value: deployment-sg
+
+  CurrentIPRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: HasCurrentIP
+    Properties:
+      GroupId: !Ref DeploymentSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Sub "${CurrentIP}/32"
+
+  DeploymentInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0c02fb55956c7d316 # Amazon Linux 2023 AMI
+      InstanceType: t3.micro
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !Ref DeploymentSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y git aws-cli
+      Tags:
+        - Key: Name
+          Value: deployment-instance
+
+Conditions:
+  HasCurrentIP: !Not [!Equals [!Ref CurrentIP, ""]]
+
+Outputs:
+  InstanceId:
+    Description: Instance ID
+    Value: !Ref DeploymentInstance
+  
+  PublicIP:
+    Description: Public IP address
+    Value: !GetAtt DeploymentInstance.PublicIp
+  
+  SecurityGroupId:
+    Description: Security Group ID
+    Value: !Ref DeploymentSecurityGroup
