@@ -5,8 +5,10 @@ Creates an EC2 instance in us-east-1 for deployment purposes with CORP network a
 ## Usage
 
 ```bash
-./deploy.sh
+./deploy.sh [aws-profile]
 ```
+
+Uses AWS_PROFILE environment variable if no profile specified.
 
 ## Features
 

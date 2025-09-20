@@ -2,6 +2,7 @@
 
 STACK_NAME="deployment-instance"
 REGION="us-east-1"
+PROFILE="${1:-$AWS_PROFILE}"
 
 # Check if on Amazon VPN by testing connectivity to internal resource
 if curl -s --connect-timeout 5 http://169.254.169.254/latest/meta-data/ > /dev/null 2>&1; then
@@ -22,7 +23,14 @@ CLOUD_CONFIG=$(cat cloud-config.yaml)
 
 # Deploy CloudFormation stack
 echo "Deploying CloudFormation stack..."
+PROFILE_ARG=""
+if [ -n "$PROFILE" ]; then
+    PROFILE_ARG="--profile $PROFILE"
+    echo "Using AWS profile: $PROFILE"
+fi
+
 aws cloudformation deploy \
+    $PROFILE_ARG \
     --template-file template.yaml \
     --stack-name "$STACK_NAME" \
     --region "$REGION" \
@@ -34,6 +42,7 @@ aws cloudformation deploy \
 if [ $? -eq 0 ]; then
     echo "Stack deployed successfully!"
     aws cloudformation describe-stacks \
+        $PROFILE_ARG \
         --stack-name "$STACK_NAME" \
         --region "$REGION" \
         --query 'Stacks[0].Outputs'
