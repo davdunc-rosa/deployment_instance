@@ -4,8 +4,6 @@ users:
     ssh-authorized-keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCmDU0v+z1/EDUJj14UvI2EjmHGLd0f85/pkiEsVakCSYyU//l/f/eworxCrYX7BZ6IN1ewcEqQ5odQye6R08+08F3TBrnnxBte/Tu17IKqAw9bqjLJhJw44UzLYfhq9mRYLdSkXPM/dTnAaSbnTTdZqW4O8E9AzPSIIMxoNDKx1xL1cvSO7r0xRWL2dF+uHiLXmeh7BvOKE3ECqRGpx37SvZgnon91YrlrHdwYREUnwePzdu4+M9LlE6YEb53VZgvi/ul1ItpanBrU+oL1PGI8J0KkIuBUaoasLiVc/NYAxlTOCi/b4dF3AG8fZOKBUgpCC0+MNjhoWy2CVW72HMK2dY1ZVCytfu+0yjIr6j5nrGT4HMlVCWZIlXwKHCSZ3yPdg2KlMotrVXPOSTZVPawZh0MkKQ8RS5/E9NQ7/Npud7D52SeOnUSEPQRVHJ3uyYb/1AEELEkfmsySUj1+fupkasc9b1Kk0SNBMBBOxJqKpuHntuRTERoEE10P+KBZT5waZI6wJklJt2ONUuP7xQXJQjOBsJQz+jjaVdtf4Oep6yarLuGnVpsp7fmFHiTe77GUPD1KXlgk6arVo783CFE6ys+yiuOfEcyUJs42Y/4VznyXIC7r24ekJkdV43LwNnihVv1I6dd5ivbv8gkEm7A22BKMAjgi6yAu796/YGtU/Q== davdunc@udb30d71d824856.ant.amazon.com
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    shell: /bin/bash
-    gecos: davdunc user
 packages:
   - git
   - awscli

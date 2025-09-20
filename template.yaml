@@ -39,7 +39,7 @@ Resources:
   DeploymentInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0c02fb55956c7d316 # Amazon Linux 2023 AMI
+      ImageId: ami-07df3bb06da88a158
       InstanceType: t3.micro
       SecurityGroupIds:
         - !Ref DeploymentSecurityGroup
