@@ -2,7 +2,6 @@
 
 STACK_NAME="deployment-instance"
 REGION="us-east-1"
-KEY_PAIR_NAME="${1:-deployment-key}"
 
 # Check if on Amazon VPN by testing connectivity to internal resource
 if curl -s --connect-timeout 5 http://169.254.169.254/latest/meta-data/ > /dev/null 2>&1; then
@@ -18,6 +17,9 @@ else
     echo "Current IP: $CURRENT_IP"
 fi
 
+# Read cloud-config content
+CLOUD_CONFIG=$(cat cloud-config.yaml)
+
 # Deploy CloudFormation stack
 echo "Deploying CloudFormation stack..."
 aws cloudformation deploy \
@@ -26,7 +28,7 @@ aws cloudformation deploy \
     --region "$REGION" \
     --parameter-overrides \
         CurrentIP="$CURRENT_IP" \
-        KeyPairName="$KEY_PAIR_NAME" \
+        CloudConfigContent="$CLOUD_CONFIG" \
     --capabilities CAPABILITY_IAM
 
 if [ $? -eq 0 ]; then

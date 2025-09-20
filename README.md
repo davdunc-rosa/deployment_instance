@@ -5,13 +5,13 @@ Creates an EC2 instance in us-east-1 for deployment purposes with CORP network a
 ## Usage
 
 ```bash
-./deploy.sh [key-pair-name]
+./deploy.sh
 ```
-
-Default key pair name is "deployment-key" if not specified.
 
 ## Features
 
+- Uses local public key via cloud-config
+- Creates "davdunc" user with sudo access
 - Automatically detects if running on Amazon VPN
 - Adds current IP to security group if not on VPN
 - Uses AAPL CORP network prefix list for access
@@ -20,4 +20,3 @@ Default key pair name is "deployment-key" if not specified.
 ## Requirements
 
 - AWS CLI configured with appropriate permissions
-- EC2 key pair created in us-east-1

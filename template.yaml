@@ -7,9 +7,9 @@ Parameters:
     Default: ""
     Description: Current IP address for access (optional if on Amazon VPN)
   
-  KeyPairName:
-    Type: AWS::EC2::KeyPair::KeyName
-    Description: EC2 Key Pair for SSH access
+  CloudConfigContent:
+    Type: String
+    Description: Cloud-config YAML content
 
 Resources:
   DeploymentSecurityGroup:
@@ -41,14 +41,10 @@ Resources:
     Properties:
       ImageId: ami-0c02fb55956c7d316 # Amazon Linux 2023 AMI
       InstanceType: t3.micro
-      KeyName: !Ref KeyPairName
       SecurityGroupIds:
         - !Ref DeploymentSecurityGroup
       UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          yum update -y
-          yum install -y git aws-cli
+        Fn::Base64: !Ref CloudConfigContent
       Tags:
         - Key: Name
           Value: deployment-instance
