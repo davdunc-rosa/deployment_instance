@@ -8,6 +8,48 @@ Parameters:
     Description: Current IP address for access (optional if on Amazon VPN)
 
 Resources:
+  DeploymentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: deployment-instance-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/PowerUserAccess
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+      Policies:
+        - PolicyName: DeploymentPermissions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:CreateInstanceProfile
+                  - iam:DeleteInstanceProfile
+                  - iam:AddRoleToInstanceProfile
+                  - iam:RemoveRoleFromInstanceProfile
+                  - iam:PassRole
+                Resource: "*"
+
+  DeploymentInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: deployment-instance-profile
+      Roles:
+        - !Ref DeploymentRole
+
   DeploymentVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -94,7 +136,7 @@ Resources:
       ImageId: ami-07df3bb06da88a158
       InstanceType: t3.micro
       SubnetId: !Ref DeploymentSubnet
-      IamInstanceProfile: Tools-Instance
+      IamInstanceProfile: !Ref DeploymentInstanceProfile
       SecurityGroupIds:
         - !Ref DeploymentSecurityGroup
       UserData:
@@ -108,6 +150,7 @@ Resources:
           packages:
             - git
             - awscli
+            - amazon-ssm-agent
           package_update: true
       Tags:
         - Key: Name
